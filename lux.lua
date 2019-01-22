@@ -1,0 +1,57 @@
+require("lib.deepcopy").insert_deep_copy()
+
+local fun = require('lib/fun')
+local apply_middleware = require('apply_middleware').apply_middleware
+
+local M = {}
+
+M.create_store = function(reducer, initial_state, enhancer)
+    if enhancer then
+        print("not")
+        return enhancer(M.create_store)(reducer, initial_state)
+    end
+    local store = store or {}
+    store["state"] = initial_state or {}
+    store["listeners"] = {}
+    store["reducer"] = reducer
+    
+    function store:get_state()
+        return table.deepcopy(self.state)
+    end
+
+    function store:subscribe(callback)
+        table.insert(self.listeners, callback)
+        return function() 
+            local index = nil
+            for k,v in pairs(self.listeners) do
+                if v == callback then
+                    index = k
+                end
+            end
+            table.remove(self.listeners, index)
+        end
+    end
+
+    function store:dispatch(action)
+        if type(action) ~= "table" then
+            error("action must be a table")
+        end
+
+        self.state = self.reducer(self:get_state(), action)
+        for k,listener in pairs(self.listeners) do
+            listener()
+        end
+    end
+
+    return store
+end
+
+M.combine_reducers = function(reducer_list)
+    local combined_reducers = {}
+    for k,v in pairs(reducer_list) do
+        combined_reducers[k] = v
+    end
+    return combined_reducers
+end
+
+return M

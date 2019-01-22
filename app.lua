@@ -1,6 +1,7 @@
-local redux = require("redux")
-local imutable = require("imutable")
-
+local redux = require("lux")
+local apply_middleware = require("apply_middleware").apply_middleware
+local thunk = require("thunk").thunk
+require("lib/deepcopy").insert_deep_copy()
 
 local actions = {}
 
@@ -9,15 +10,15 @@ actions.create_item = function(item)
 end
 
 local items_reducer = function(state, action)
-    action = imutable.clone_table(action)
+    action = table.deepcopy(action)
     state = state or  {}
     if action.type == "CREATE_ITEM" then
-        new_state = imutable.clone_table(state)
+        new_state = table.deepcopy(state)
         table.insert(new_state, action.payload)
         return new_state
     elseif action.type == "DELETE_ITEM" then
-        new_state = imutable.clone_table(state)
-        new_state = imutable.delete_key(new_state, action.payload)
+        new_state = table.deepcopy(state)
+        table.remove(new_state, action.payload)
         return new_state
     else
         return state
@@ -26,7 +27,7 @@ end
 
 local main = function() 
     local reducers = redux.combine_reducers({item = items_reducer})
-    local store = redux.create_store(reducers)
+    local store = redux.create_store(items_reducer, nil, apply_middleware(thunk))
     local item = {
         type = "CREATE_ITEM",
         payload = {
@@ -48,10 +49,6 @@ local main = function()
         payload = 1
     }
     store:dispatch(item)
-    
-    for k,v in pairs(store["data"]["item"]) do
-        print(k,v)
-    end
 
     -- for k,v in pairs(store["data"]["items"]) do 
     --     print(k,v)
