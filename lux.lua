@@ -7,7 +7,6 @@ local M = {}
 
 M.create_store = function(reducer, initial_state, enhancer)
     if enhancer then
-        print("not")
         return enhancer(M.create_store)(reducer, initial_state)
     end
     local store = store or {}
@@ -49,9 +48,19 @@ end
 M.combine_reducers = function(reducer_list)
     local combined_reducers = {}
     for k,v in pairs(reducer_list) do
+        if type(v) ~= "function" then
+            error("The reducers must be functions.")
+        end
         combined_reducers[k] = v
     end
-    return combined_reducers
+    return function(state, action)
+        state = state or {}
+        local new_state = table.deepcopy(state)
+        for k,v in pairs(combined_reducers) do
+            new_state[k] = v(state[k], action)
+        end
+        return new_state
+    end
 end
 
 return M

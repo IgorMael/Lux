@@ -1,5 +1,6 @@
 local fun = require('lib/fun')
 local utils = require('utils')
+require("lib/deepcopy").insert_deep_copy()
 
 table.unpack = table.unpack or unpack
 
@@ -14,20 +15,18 @@ M.apply_middleware = function(...)
             end
             
             local middleware_api = {
-                get_state = store.get_state,
                 dispatch = function (...)
                      return dispatch(table.unpack({...})) 
-                    end
+                    end,
+                get_state = store:get_state()
             }
             
             local chain =  {middlewares[1](middleware_api)} 
-            print(middlewares[1])
-            -- fun.map(function (middleware) 
-            --     return middleware(middleware_api) 
-            -- end, middlewares)
+            local old_store = table.deepcopy(store)
+            dispatch = chain[1](old_store)
+            store["dispatch"] = dispatch
 
-            dispatch = chain[1](store.dispatch)
-            return utils.extends(store, dispatch)
+            return store
         end    
 
     end
