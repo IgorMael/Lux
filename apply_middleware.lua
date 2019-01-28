@@ -1,6 +1,7 @@
-local fun = require('lib/fun')
-local utils = require('utils')
-require("lib/deepcopy").insert_deep_copy()
+local fun = require('utils.fun')
+-- local utils = require('utils')
+fun.compose = require('utils/compose').compose
+table.deepcopy = require("utils.deepcopy").deepcopy
 
 table.unpack = table.unpack or unpack
 
@@ -13,18 +14,8 @@ M.apply_middleware = function(...)
             local dispatch = function()
                 error("Dispatch is not ready yet", 2)
             end
-            
-            local middleware_api = {
-                dispatch = function (...)
-                     return dispatch(table.unpack({...})) 
-                    end,
-                get_state = store:get_state()
-            }
-            
-            local chain =  {middlewares[1](middleware_api)} 
-            local old_store = table.deepcopy(store)
-            dispatch = chain[1](old_store)
-            store["dispatch"] = dispatch
+
+            store["dispatch"] = fun.compose(store.dispatch, table.unpack(middlewares))
 
             return store
         end    
@@ -33,3 +24,16 @@ M.apply_middleware = function(...)
 end
 
 return M
+
+
+            
+-- local middleware_api = {
+--     dispatch = function (...)
+--          return dispatch(table.unpack({...})) 
+--         end,
+--     get_state = store:get_state()
+-- }
+
+-- local chain =  {middlewares[1](middleware_api)} 
+-- local old_store = table.deepcopy(store)
+-- dispatch = chain[1](old_store)

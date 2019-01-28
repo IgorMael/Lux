@@ -1,7 +1,8 @@
-require("lib.deepcopy").insert_deep_copy()
-
-local fun = require('lib/fun')
+local fun = require('utils/fun')
 local apply_middleware = require('apply_middleware').apply_middleware
+
+local table = table
+table.deepcopy =  require("utils.deepcopy").deepcopy
 
 local M = {}
 
@@ -32,6 +33,7 @@ M.create_store = function(reducer, initial_state, enhancer)
     end
 
     function store:dispatch(action)
+        print(action.type)
         if type(action) ~= "table" then
             error("action must be a table")
         end
@@ -41,7 +43,6 @@ M.create_store = function(reducer, initial_state, enhancer)
             listener()
         end
     end
-
     return store
 end
 

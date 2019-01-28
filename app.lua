@@ -1,7 +1,7 @@
 local redux = require("lux")
 local apply_middleware = require("apply_middleware").apply_middleware
 local thunk = require("thunk").thunk
-require("lib/deepcopy").insert_deep_copy()
+table.deepcopy = require("utils.deepcopy").deepcopy
 
 local actions = {}
 
@@ -61,31 +61,15 @@ local main = function()
             nome = "Goblin" 
         }
     }
-    store:dispatch(item)
---     store:dispatch(monster)
---     local item = {
---         type = "CREATE_ITEM",
---         payload = {
---             id = 2,
---             nome = "Machado" 
---         }
---     }
---     store:dispatch(item)
-
---     for k,v in pairs(store:get_state()) do 
---         print(k)
---         for k2,v2 in pairs(v) do
---             print("\t " .. v2["nome"])
---             -- for i, ent in pairs(v2) do
---             --     print(ent)
---             -- end
---         end
---     end
-
---     -- local a = {a = 1, b =  2,c = {a = 2}}
---     -- local b = clone_table(a)
---     -- a.c.a = 5
---     -- print(b.c.a)
+    store.dispatch(store, item)
+    store.dispatch(store, monster)
+    local item = {
+        type = "CREATE_ITEM",
+        payload = {
+            id = 2,
+            nome = "Machado" 
+        }
+    }
 end
 
 
