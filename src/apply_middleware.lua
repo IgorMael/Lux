@@ -1,7 +1,7 @@
-local fun = require('src.deps.fun')
+local fun = require('deps.fun')
 -- local utils = require('utils')
-fun.compose = require('src.deps.compose').compose
-table.deepcopy = require("src.deps.deepcopy").deepcopy
+fun.compose = require('deps.compose').compose
+table.deepcopy = require("deps.deepcopy").deepcopy
 
 
 table.unpack = table.unpack or unpack

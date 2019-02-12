@@ -1,4 +1,4 @@
-local fun = require('src.deps.fun')
+local fun = require('deps.fun')
 local M = {}
 local unpack = table.unpack or unpack
 

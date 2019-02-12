@@ -1,8 +1,8 @@
-local fun = require('src.deps.fun')
-local apply_middleware = require('src.apply_middleware').apply_middleware
+local fun = require('deps.fun')
+local apply_middleware = require('apply_middleware').apply_middleware
 
 local table = table
-table.deepcopy =  require("src.deps.deepcopy").deepcopy
+table.deepcopy =  require("deps.deepcopy").deepcopy
 
 local M = {}
 
