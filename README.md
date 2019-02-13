@@ -13,7 +13,7 @@ This module implements major redux features on Lua. You can create a store, disp
 You can install this package using the [OPM](https://opm.openresty.org/)
 
 ```
-opm install IgorMael/Lux
+opm install IgorMael/lux
 ```
 
 ### Creating a store
@@ -73,9 +73,9 @@ local store = lux.create_store(reducer)
 
 local create_foo = function(name, bar_level)
     return {
-        type = "ADD_MONSTER",
+        type = "CREATE_FOO",
         payload = {
-            id = id,
+            bar_level = bar_level,
             name = name
         }
     }
@@ -100,9 +100,9 @@ local store = lux.create_store(reducer)
 
 local create_foo = function(name, bar_level)
     return {
-        type = "ADD_MONSTER",
+        type = "CREATE_FOO",
         payload = {
-            id = id,
+            bar_level = bar_level,
             name = name
         }
     }
